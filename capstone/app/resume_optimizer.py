@@ -1,0 +1,36 @@
+import streamlit as st
+import requests
+from datetime import datetime
+import pdfplumber
+
+def run_resume_optimizer():
+    #st.title("CareerPilot - Resume Optimizer & Job Tracker")
+    st.header("Resume Optimizer")
+    col1, col2 = st.columns(2)
+    with col1:
+        resume_option = st.radio("Choose a upload method:", ["Upload PDF", "Paste Text"])
+        resume_text = ""
+        if resume_option == "Upload PDF":
+            uploaded_file = st.file_uploader("Upload your resume (PDF only)", type="pdf")
+        if uploaded_file:
+            with pdfplumber.open(uploaded_file) as pdf:
+                for page in pdf.pages:
+                    resume_text += page.extract_text()
+        else:
+            resume_text = st.text_area("Paste your resume text here:")
+    with col2:
+        job_description = st.text_area("Paste the job description here:")
+    if st.button("Optimize My Resume"):
+        if resume_text and job_description:
+            with st.spinner("Analyzing with AI..."):
+                response = requests.post("http://localhost:8000/optimize-resume", json={
+                "resume": resume_text,
+                "job_description": job_description
+            })
+            if response.status_code == 200:
+                st.success("Here's what you can do to improve your resume:")
+                st.markdown(response.json()["recommendations"])
+            else:
+                st.error("Something went wrong.")
+    else:
+        st.warning("Please provide both resume and job description.")

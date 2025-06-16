@@ -11,31 +11,9 @@ def run_dashboard():
 
     search_query = st.text_input("🔍 Search by job title or company")
 
-    st.subheader("➕ Add a New Job Application")
-    with st.form("job_form"):
-        title = st.text_input("Job Title")
-        company = st.text_input("Company")
-        description = st.text_area("Job Description")
-        applied_on = st.date_input("Date Applied", value=date.today())
-        status = st.selectbox("Application Status", ["Applied", "Interview", "Offer", "Rejected"])
-        submitted = st.form_submit_button("Add Job")
+   
 
-    if submitted:
-        payload = {
-            "title": title,
-            "company": company,
-            "job_description": description,
-            "applied_on": applied_on.isoformat(),
-            "status": status
-        }
-        res = requests.post(f"{API_URL}/jobs", json=payload)
-        if res.status_code == 200:
-            st.success("✅ Job application added!")
-            st.rerun()
-        else:
-            st.error(f"❌ Failed to add job: {res.text}")
-
-    st.subheader("📊 Your Job Applications")
+    st.subheader("Your Job Applications")
 
     try:
         response = requests.get(f"{API_URL}/jobs")
@@ -108,3 +86,27 @@ def run_dashboard():
             st.error("Unable to fetch job applications.")
     except Exception as e:
         st.error(f"Error: {e}")
+    
+    st.subheader("➕ Add a New Job Application")
+    with st.form("job_form"):
+        title = st.text_input("Job Title")
+        company = st.text_input("Company")
+        description = st.text_area("Job Description")
+        applied_on = st.date_input("Date Applied", value=date.today())
+        status = st.selectbox("Application Status", ["Applied", "Interview", "Offer", "Rejected"])
+        submitted = st.form_submit_button("Add Job")
+
+    if submitted:
+        payload = {
+            "title": title,
+            "company": company,
+            "job_description": description,
+            "applied_on": applied_on.isoformat(),
+            "status": status
+        }
+        res = requests.post(f"{API_URL}/jobs", json=payload)
+        if res.status_code == 200:
+            st.success("✅ Job application added!")
+            st.rerun()
+        else:
+            st.error(f"❌ Failed to add job: {res.text}")

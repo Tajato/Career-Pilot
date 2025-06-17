@@ -1,17 +1,26 @@
 import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from openai import OpenAI
 import models
 import schemas
 import db_logic
 import database
-from openai import OpenAI
 
 #declare FastAPI
 app = FastAPI()
 
+# adding security feature to ensure only my streamlit frontend can send requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:8501"],  
+    allow_credentials=True,
+    allow_methods=["*"],                      
+    allow_headers=["*"],                      
+)
 # open database connection for fastapi.
 def get_db():
     db = database.SessionLocal()

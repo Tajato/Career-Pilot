@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+from fastapi.responses import JSONResponse
+
 import models
 import schemas
 
@@ -20,8 +22,8 @@ def delete_job_app(db: Session, job_id: int):
     if job:
         db.delete(job)
         db.commit()
-        return True
-    return False
+    return JSONResponse(content={"message": "Job deleted"})
+    
 
 # update a job application
 def update_job_app(db: Session, job_id: int, updated_data: schemas.JobApplicationUpdate):

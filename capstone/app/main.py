@@ -15,7 +15,7 @@ app = FastAPI()
 # adding security feature to ensure only my streamlit frontend can send requests
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8501"],  
+    allow_origins=["https://career-pilot-fb35.onrender.com/"],  
     allow_credentials=True,
     allow_methods=["*"],                      
     allow_headers=["*"],                      

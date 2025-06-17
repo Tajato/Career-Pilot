@@ -7,7 +7,7 @@ from datetime import date, datetime
 
 def run_dashboard():
     st.title("Job Application Tracker")
-    API_URL = "https://career-pilot-fb35.onrender.com"
+    API_URL = "https://career-pilot-backend-0dfi.onrender.com"
 
     search_query = st.text_input("🔍 Search by job title or company")
 

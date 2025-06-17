@@ -6,7 +6,7 @@ from datetime import date, datetime
 #Generates reports for users
 def run_reports():
     st.title("📄 Generate a Report")
-    API_URL = "http://localhost:8000"
+    API_URL = "https://career-pilot-backend-0dfi.onrender.com"
 
     report_type = st.selectbox(
         "Choose a report type",

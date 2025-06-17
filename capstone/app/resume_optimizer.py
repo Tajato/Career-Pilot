@@ -19,7 +19,7 @@ def run_resume_optimizer():
         else:
             resume_text = st.text_area("Paste your resume text here:")
     with col2:
-        job_description = st.text_area("Paste the job description here:")
+        job_description = st.text_area("Paste the job description here:", height=400)
     if st.button("Optimize My Resume"):
         if resume_text and job_description:
             with st.spinner("Analyzing with AI..."):

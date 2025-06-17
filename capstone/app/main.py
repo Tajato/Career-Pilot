@@ -30,7 +30,8 @@ def get_db():
 
 # Set your OpenAI API key
 client = OpenAI(
-    api_key = os.getenv("OPENAI_API_KEY"),
+    api_key = print("DEBUG >>>", os.getenv("OPENAI_API_KEY"))
+#os.getenv("OPENAI_API_KEY"),
 )
 class ResumeOptimizationRequest(BaseModel):
     resume: str

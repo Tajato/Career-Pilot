@@ -90,10 +90,8 @@ def run_dashboard():
                                         st.error("❌ Update failed.")
             else:
                 st.info("No job applications found.")
-        else:
-            st.error("Unable to fetch job applications.")
-    except Exception as e:
-        st.error(f"Error: {e}")
+    except requests.exceptions.RequestException as e:
+        st.error(f"Unable to fetch job applications.\n\n{e}")
     
     st.subheader("➕ Add a New Job Application")
     with st.form("job_form"):

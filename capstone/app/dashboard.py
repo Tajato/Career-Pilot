@@ -9,14 +9,12 @@ def run_dashboard():
     st.title("Job Application Tracker")
     API_URL = "https://career-pilot-backend-0dfi.onrender.com"
 
-    search_query = st.text_input("🔍 Search by job title or company")
 
    
 
     st.subheader("Your Job Applications")
 
     search_query = st.text_input("🔍 Search by job title or company")
-    st.subheader("Your Job Applications")
 
     try:
         response = requests.get(f"{API_URL}/jobs")

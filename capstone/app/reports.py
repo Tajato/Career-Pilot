@@ -3,6 +3,7 @@ import requests
 import pandas as pd
 from datetime import date, datetime
 
+#Generates reports for users
 def run_reports():
     st.title("📄 Generate a Report")
     API_URL = "http://localhost:8000"

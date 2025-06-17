@@ -23,7 +23,7 @@ def run_resume_optimizer():
     if st.button("Optimize My Resume"):
         if resume_text and job_description:
             with st.spinner("Analyzing with AI..."):
-                response = requests.post("http://localhost:8000/optimize-resume", json={
+                response = requests.post("https://career-pilot-fb35.onrender.com/optimize-resume", json={
                 "resume": resume_text,
                 "job_description": job_description
             })

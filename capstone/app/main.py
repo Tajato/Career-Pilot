@@ -28,9 +28,10 @@ def get_db():
     finally:
         db.close()
 
+print("DEBUG >>>", os.getenv("OPENAI_API_KEY"))  
+
 # Set your OpenAI API key
 client = OpenAI(
-    print("DEBUG >>>", os.getenv("OPENAI_API_KEY"))  
     api_key = os.getenv("OPENAI_API_KEY")
 #os.getenv("OPENAI_API_KEY"),
 )

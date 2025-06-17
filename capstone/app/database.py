@@ -7,8 +7,11 @@ import os
 SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL")
 
 
+if not SQLALCHEMY_DATABASE_URL:
+    raise ValueError("DATABASE_URL is not set in environment variables.")
+
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+   SQLALCHEMY_DATABASE_URL
 )
 
 # sessionmaker is used to talk to the database

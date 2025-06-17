@@ -32,7 +32,7 @@ def get_db():
 # Set your OpenAI API key
 load_dotenv()
 client = OpenAI(
-    api_key = os.environ.get("OPENAI_API_KEY"),
+    api_key = os.getenv("OPENAI_API_KEY"),
 )
 class ResumeOptimizationRequest(BaseModel):
     resume: str

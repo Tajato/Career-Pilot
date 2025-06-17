@@ -15,7 +15,10 @@ def run_dashboard():
 
     st.subheader("Your Job Applications")
 
-try:
+    search_query = st.text_input("🔍 Search by job title or company")
+    st.subheader("Your Job Applications")
+
+    try:
         response = requests.get(f"{API_URL}/jobs")
         response.raise_for_status()
         job_data = response.json()
@@ -27,64 +30,67 @@ try:
                 or search_query.lower() in job["company"].lower()
             ]
 
-        if job_data:
-            for job in job_data:
-                job_id = job["id"]
-                edit_key = f"edit_{job_id}"
-                if edit_key not in st.session_state:
-                    st.session_state[edit_key] = False
+        if job_data is not None:
+            if len(job_data) == 0:
+                st.info("No job applications found.")
+            else:
+                for job in job_data:
+                    job_id = job["id"]
+                    edit_key = f"edit_{job_id}"
+                    if edit_key not in st.session_state:
+                        st.session_state[edit_key] = False
 
-                with st.expander(f"{job['title']} at {job['company']}"):
-                    st.markdown(f"**Status:** {job['status']}")
-                    st.markdown(f"**Applied On:** {job['applied_on']}")
-                    st.markdown(f"**Description:**\n{job['job_description']}")
+                    with st.expander(f"{job['title']} at {job['company']}"):
+                        st.markdown(f"**Status:** {job['status']}")
+                        st.markdown(f"**Applied On:** {job['applied_on']}")
+                        st.markdown(f"**Description:**\n{job['job_description']}")
 
-                    col1, col2 = st.columns([1, 1])
-                    with col1:
-                        if st.button("✏️ Edit", key=f"edit_btn_{job_id}"):
-                            st.session_state[edit_key] = not st.session_state[edit_key]
+                        col1, col2 = st.columns([1, 1])
+                        with col1:
+                            if st.button("✏️ Edit", key=f"edit_btn_{job_id}"):
+                                st.session_state[edit_key] = not st.session_state[edit_key]
 
-                    with col2:
-                        if st.button("🗑️ Delete", key=f"delete_btn_{job_id}"):
-                            res = requests.delete(f"{API_URL}/jobs/{job_id}")
-                            if res.status_code == 200:
-                                st.success("🗑️ Job deleted!")
-                                st.rerun()
-                            else:
-                                st.error("❌ Deletion failed.")
-
-                    if st.session_state[edit_key]:
-                        with st.form(f"edit_form_{job_id}"):
-                            new_title = st.text_input("Edit Title", value=job["title"], key=f"title_{job_id}")
-                            new_company = st.text_input("Edit Company", value=job["company"], key=f"company_{job_id}")
-                            new_description = st.text_area("Edit Description", value=job["job_description"], key=f"desc_{job_id}")
-                            new_applied = st.date_input("Edit Date", value=datetime.fromisoformat(job["applied_on"]).date(), key=f"date_{job_id}")
-                            new_status = st.selectbox(
-                                "Edit Status",
-                                ["Applied", "Interview", "Offer", "Rejected"],
-                                index=["Applied", "Interview", "Offer", "Rejected"].index(job["status"]),
-                                key=f"status_{job_id}"
-                            )
-                            if st.form_submit_button("Save Changes"):
-                                update_payload = {
-                                    "title": new_title,
-                                    "company": new_company,
-                                    "job_description": new_description,
-                                    "applied_on": new_applied.isoformat(),
-                                    "status": new_status
-                                }
-                                res = requests.put(f"{API_URL}/jobs/{job_id}", json=update_payload)
+                        with col2:
+                            if st.button("🗑️ Delete", key=f"delete_btn_{job_id}"):
+                                res = requests.delete(f"{API_URL}/jobs/{job_id}")
                                 if res.status_code == 200:
-                                    st.success("✅ Updated!")
-                                    st.session_state[edit_key] = False
+                                    st.success("🗑️ Job deleted!")
                                     st.rerun()
                                 else:
-                                    st.error("❌ Update failed.")
-        else:
-            st.info("No job applications found.")
+                                    st.error("❌ Deletion failed.")
 
-except requests.exceptions.RequestException as e:
-    st.error(f"Unable to fetch job applications.\n\n{e}")
+                        if st.session_state[edit_key]:
+                            with st.form(f"edit_form_{job_id}"):
+                                new_title = st.text_input("Edit Title", value=job["title"], key=f"title_{job_id}")
+                                new_company = st.text_input("Edit Company", value=job["company"], key=f"company_{job_id}")
+                                new_description = st.text_area("Edit Description", value=job["job_description"], key=f"desc_{job_id}")
+                                new_applied = st.date_input("Edit Date", value=datetime.fromisoformat(job["applied_on"]).date(), key=f"date_{job_id}")
+                                new_status = st.selectbox(
+                                    "Edit Status",
+                                    ["Applied", "Interview", "Offer", "Rejected"],
+                                    index=["Applied", "Interview", "Offer", "Rejected"].index(job["status"]),
+                                    key=f"status_{job_id}"
+                                )
+                                if st.form_submit_button("Save Changes"):
+                                    update_payload = {
+                                        "title": new_title,
+                                        "company": new_company,
+                                        "job_description": new_description,
+                                        "applied_on": new_applied.isoformat(),
+                                        "status": new_status
+                                    }
+                                    res = requests.put(f"{API_URL}/jobs/{job_id}", json=update_payload)
+                                    if res.status_code == 200:
+                                        st.success("✅ Updated!")
+                                        st.session_state[edit_key] = False
+                                        st.rerun()
+                                    else:
+                                        st.error("❌ Update failed.")
+        else:
+            st.error("Unable to fetch job applications.")
+
+    except requests.exceptions.RequestException as e:
+        st.error(f"Unable to fetch job applications.\n\n{e}")
 
     st.subheader("➕ Add a New Job Application")
     with st.form("job_form"):

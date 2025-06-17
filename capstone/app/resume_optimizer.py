@@ -3,8 +3,8 @@ import requests
 from datetime import datetime
 import pdfplumber
 
+# Page that provide resume recommendations
 def run_resume_optimizer():
-    #st.title("CareerPilot - Resume Optimizer & Job Tracker")
     st.header("Resume Optimizer")
     col1, col2 = st.columns(2)
     with col1:

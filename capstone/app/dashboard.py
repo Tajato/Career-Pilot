@@ -3,7 +3,7 @@ import requests
 from datetime import date, datetime
 
 
-#st.set_page_config(page_title="Job Tracker", layout="wide")
+# Display job dashboard to track jobs
 
 def run_dashboard():
     st.title("Job Application Tracker")
@@ -89,8 +89,8 @@ def run_dashboard():
     
     st.subheader("➕ Add a New Job Application")
     with st.form("job_form"):
-        title = st.text_input("Job Title")
-        company = st.text_input("Company")
+        title = st.text_input("Job Title").strip()
+        company = st.text_input("Company").strip()
         description = st.text_area("Job Description")
         applied_on = st.date_input("Date Applied", value=date.today())
         status = st.selectbox("Application Status", ["Applied", "Interview", "Offer", "Rejected"])

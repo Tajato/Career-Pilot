@@ -30,6 +30,9 @@ def get_db():
 
 print("DEBUG >>>", os.getenv("OPENAI_API_KEY"))  
 
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    raise RuntimeError("OPENAI_API_KEY is not set in environment variables")
 # Set your OpenAI API key
 client = OpenAI(
     api_key = os.getenv("OPENAI_API_KEY")

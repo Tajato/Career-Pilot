@@ -17,23 +17,31 @@ def run_dashboard():
 
     try:
         response = requests.get(f"{API_URL}/jobs")
-        if response.status_code == 200:
+
+        try:
+            response.raise_for_status()
             job_data = response.json()
+        except requests.exceptions.HTTPError:
+            st.error(f"❌ Server error: {response.status_code} - {response.text}")
+            return
+        except ValueError:
+            st.error("❌ Failed to parse JSON response from backend.")
+            st.text(f"Raw response: {response.text}")
+            return
 
-            if search_query:
-                job_data = [
-                    job for job in job_data
-                    if search_query.lower() in job["title"].lower()
-                    or search_query.lower() in job["company"].lower()
-                ]
+        if search_query:
+            job_data = [
+                job for job in job_data
+                if search_query.lower() in job["title"].lower()
+                or search_query.lower() in job["company"].lower()
+            ]
 
-            if job_data:
-                for job in job_data:
-                    job_id = job["id"]
-                    edit_key = f"edit_{job_id}"
-                    if edit_key not in st.session_state:
-                        st.session_state[edit_key] = False
-
+        if job_data:
+            for job in job_data:
+                job_id = job["id"]
+                edit_key = f"edit_{job_id}"
+                if edit_key not in st.session_state:
+                    st.session_state[edit_key] = False
                     with st.expander(f"{job['title']} at {job['company']}"):
                         st.markdown(f"**Status:** {job['status']}")
                         st.markdown(f"**Applied On:** {job['applied_on']}")

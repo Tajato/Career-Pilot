@@ -87,14 +87,11 @@ Suggestions:
 
         doc.save(docx_filename)
 
-        # Convert to PDF (only works if Word is installed on machine)
-        # try:
-        #     convert(docx_filename, pdf_filename)
-        #     return FileResponse(pdf_filename, media_type="application/pdf", filename="Tailored_Resume.pdf")
-        # except Exception as pdf_error:
-        #     print("PDF conversion failed, returning DOCX instead:", pdf_error)
-        #     return FileResponse(docx_filename, media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document", filename="Tailored_Resume.docx")
-
+        return FileResponse(
+            docx_filename,
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            filename=docx_filename
+        )
 
     except Exception as e:
         print("Error with your request:", e)

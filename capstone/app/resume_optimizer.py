@@ -28,7 +28,7 @@ def run_resume_optimizer():
                 "job_description": job_description
             })
             if response.status_code == 200:
-                 timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                  filename = f"Tahj_Gordon_Resume_{timestamp}.docx"
                  st.success("Done! Click below to download:")
                  st.download_button("Download Resume", response.content, file_name=filename)

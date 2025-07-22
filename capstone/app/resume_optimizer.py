@@ -28,8 +28,10 @@ def run_resume_optimizer():
                 "job_description": job_description
             })
             if response.status_code == 200:
-                st.success("Here's what you can do to improve your resume:")
-                st.markdown(response.json()["recommendations"])
+                 timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                 filename = f"Tahj_Gordon_Resume_{timestamp}.docx"
+                 st.success("Done! Click below to download:")
+                 st.download_button("Download Resume", response.content, file_name=filename)
             else:
                 st.error("Something went wrong.")
     else:

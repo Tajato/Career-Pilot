@@ -8,3 +8,5 @@ openai
 streamlit
 requests
 psycopg2-binary
+python-docx
+docx2pdf

@@ -4,10 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 #from sqlalchemy.orm import Session
 from openai import OpenAI
-import models
-import schemas
-import db_logic
-import database
+from docx import Document
+from docx.shared import Pt
+from fastapi.responses import FileResponse
+from docx2pdf import convert
+import uuid
 
 #declare FastAPI
 app = FastAPI()
@@ -47,8 +48,8 @@ class ResumeOptimizationRequest(BaseModel):
 def optimize_resume(payload: ResumeOptimizationRequest):
     prompt = f"""
 You are a resume expert. Review the following resume and job description.
-Suggest detailed improvements to the resume so it aligns better with the job description.
-Be specific and use bullet points if helpful. Please do not ask any follow up questions because your ouput will be displayed on a webpage.
+Based on the resume and job description below, generate a professionally formatted resume that is tailored to the job description. Use sections like Summary, Experience, Skills, and Education.
+
 
 Resume:
 {payload.resume}
@@ -67,8 +68,33 @@ Suggestions:
             
         )
 
-        suggestions = response.output_text
-        return {"recommendations": suggestions}
+        tailored_resume = response.output_text
+        #return {"recommendations": suggestions}
+        # Generate DOCX file
+        unique_id = uuid.uuid4().hex
+        docx_filename = f"./generated_docs/resume_{unique_id}.docx"
+        pdf_filename = f"./generated_docs/resume_{unique_id}.pdf"
+
+        os.makedirs("generated_docs", exist_ok=True)
+
+        doc = Document()
+        style = doc.styles['Normal']
+        style.font.name = 'Calibri'
+        style.font.size = Pt(11)
+
+        for line in tailored_resume.split('\n'):
+            doc.add_paragraph(line)
+
+        doc.save(docx_filename)
+
+        # Convert to PDF (only works if Word is installed on machine)
+        # try:
+        #     convert(docx_filename, pdf_filename)
+        #     return FileResponse(pdf_filename, media_type="application/pdf", filename="Tailored_Resume.pdf")
+        # except Exception as pdf_error:
+        #     print("PDF conversion failed, returning DOCX instead:", pdf_error)
+        #     return FileResponse(docx_filename, media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document", filename="Tailored_Resume.docx")
+
 
     except Exception as e:
         print("Error with your request:", e)

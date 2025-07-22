@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+#from sqlalchemy.orm import Session
 from openai import OpenAI
 import models
 import schemas
@@ -21,12 +21,12 @@ app.add_middleware(
     allow_headers=["*"],                      
 )
 # open database connection for fastapi.
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db # yield the session so fastapi can use it.
-    finally:
-        db.close()
+# def get_db():
+#     db = database.SessionLocal()
+#     try:
+#         yield db # yield the session so fastapi can use it.
+#     finally:
+#         db.close()
 
 print("DEBUG >>>", os.getenv("OPENAI_API_KEY"))  
 
@@ -74,35 +74,35 @@ Suggestions:
         print("Error with your request:", e)
         raise HTTPException(status_code=500, detail=str(e))
     
-# adds a new job application entry to the database
-@app.post("/jobs", response_model=schemas.JobApplicationResponse)
-def add_job(job: schemas.JobApplicationCreate, db: Session = Depends(get_db)):
-    return db_logic.create_job_app(db, job)
+# # adds a new job application entry to the database
+# @app.post("/jobs", response_model=schemas.JobApplicationResponse)
+# def add_job(job: schemas.JobApplicationCreate, db: Session = Depends(get_db)):
+#     return db_logic.create_job_app(db, job)
 
-# grab all the job applications
-@app.get("/jobs", response_model=list[schemas.JobApplicationResponse])
-def get_jobs(db: Session = Depends(get_db)):
-    return db_logic.get_all_jobs(db)
+# # grab all the job applications
+# @app.get("/jobs", response_model=list[schemas.JobApplicationResponse])
+# def get_jobs(db: Session = Depends(get_db)):
+#     return db_logic.get_all_jobs(db)
 
-# update a job application
-@app.put("/jobs/{job_id}", response_model=schemas.JobApplicationResponse)
-def update_job(job_id: int, job_update: schemas.JobApplicationUpdate, db: Session = Depends(get_db)):
-    updated_job = db_logic.update_job_app(db, job_id, job_update)
-    if not updated_job:
-        raise HTTPException(status_code=404, detail="Job not found")
-    return updated_job
+# # update a job application
+# @app.put("/jobs/{job_id}", response_model=schemas.JobApplicationResponse)
+# def update_job(job_id: int, job_update: schemas.JobApplicationUpdate, db: Session = Depends(get_db)):
+#     updated_job = db_logic.update_job_app(db, job_id, job_update)
+#     if not updated_job:
+#         raise HTTPException(status_code=404, detail="Job not found")
+#     return updated_job
 
-# delete a job application
-@app.delete("/jobs/{job_id}")
-def delete_job(job_id: int, db: Session = Depends(get_db)):
-    success = db_logic.delete_job_app(db, job_id)
-    if not success:
-        raise HTTPException(status_code=404, detail="Job not found")
-    return {"detail": "Job deleted"}
+# # delete a job application
+# @app.delete("/jobs/{job_id}")
+# def delete_job(job_id: int, db: Session = Depends(get_db)):
+#     success = db_logic.delete_job_app(db, job_id)
+#     if not success:
+#         raise HTTPException(status_code=404, detail="Job not found")
+#     return {"detail": "Job deleted"}
 
-# search database
-@app.get("/jobs/search/")
-def search_jobs(query: str, db: Session = Depends(get_db)):
-    return db.query(models.JobApplication).filter(
-        models.JobApplication.title.ilike(f"%{query}%")
-    ).all()
+# # search database
+# @app.get("/jobs/search/")
+# def search_jobs(query: str, db: Session = Depends(get_db)):
+#     return db.query(models.JobApplication).filter(
+#         models.JobApplication.title.ilike(f"%{query}%")
+#     ).all()

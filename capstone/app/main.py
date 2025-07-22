@@ -38,6 +38,7 @@ client = OpenAI(
     api_key = os.getenv("OPENAI_API_KEY")
 #os.getenv("OPENAI_API_KEY"),
 )
+#testing
 class ResumeOptimizationRequest(BaseModel):
     resume: str
     job_description: str

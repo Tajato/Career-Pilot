@@ -48,7 +48,7 @@ class ResumeOptimizationRequest(BaseModel):
 def optimize_resume(payload: ResumeOptimizationRequest):
     prompt = f"""
 You are a resume expert. Review the following resume and job description.
-Based on the resume and job description below, generate a professionally formatted resume that is tailored to the job description. Use sections like Summary, Experience, Skills, and Education.
+Based on the resume and job description below, generate a professionally formatted resume that is tailored to the job description. Use sections in this order: 1.Summary, 2.Experience, 3.Projects, 4.Skills, 5.Education, 6.Certifications
 
 
 Resume:
@@ -81,9 +81,32 @@ Suggestions:
         style = doc.styles['Normal']
         style.font.name = 'Calibri'
         style.font.size = Pt(11)
+        text = tailored_resume
+        for line in text.split('\n'):
+          line = line.strip()
+          if not line:
+              continue
 
-        for line in tailored_resume.split('\n'):
-            doc.add_paragraph(line)
+          if line.isupper() and len(line) < 30:
+            p = doc.add_paragraph()
+            run = p.add_run(line)
+            run.bold = True
+            run.underline = True
+            continue
+
+          if line.startswith("**") and line.endswith("**"):
+            clean_line = line.strip("*")
+            p = doc.add_paragraph()
+            run = p.add_run(clean_line)
+            run.bold = True
+            continue
+
+          if line.startswith("- ") or line.startswith("\u2022"):
+            doc.add_paragraph(line.lstrip("-\u2022 ").strip(), style='List Bullet')
+            continue
+
+          doc.add_paragraph(line)
+
 
         doc.save(docx_filename)
 
